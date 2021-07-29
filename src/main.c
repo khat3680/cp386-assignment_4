@@ -3,9 +3,9 @@
  * CP 386 - Assignment 4
  * 
  * @author Anshul Khatri (193313680) - https://github.com/khat3680/
- * @author Pranav Verma () - https://github.com/Navsan1
+ * @author Pranav Verma (193272030) - https://github.com/Navsan1
  * 
- * @see https://github.com
+ * @see https://github.com/khat3680/cp386-assignment_4
  * 
  */
 #include <stdio.h>
