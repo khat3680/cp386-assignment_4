@@ -116,7 +116,7 @@ int load_c_resources()
             // create customer data structure to initialise it.
             Customer c;
 
-            c.maximum_resources = delimited_string_to_int_array(line, ",", (n_resources));
+            c.maximum_resources = string_to_int_array(line, ",", (n_resources));
             c.allocated_resources = malloc(sizeof(int) * n_resources);
             c.need_resources = malloc(sizeof(int) * n_resources);
 
@@ -136,4 +136,28 @@ int load_c_resources()
     //avoid memory leaks
     free(line);
     fclose(file_p);
+}
+
+/**
+ * Takes a string, delimeter, and length of array and creates and
+ * fills an array with integer conversions of the contents of the
+ * string split by the delimeter.
+ *
+ * @author Anshul Khatri
+ */
+int *string_to_int_array(char *msg, char *delimeter, int len)
+{
+    int *arr = (int *)malloc(len * sizeof(int));
+
+    int count = 0;
+    char *token;
+    while ((token = strsep(&msg, delimeter)) != NULL)
+    {
+        if (token != "")
+        {
+            arr[count] = atoi(token);
+            count++;
+        }
+    }
+    return arr;
 }
