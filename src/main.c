@@ -18,6 +18,7 @@
 #include <sys/stat.h>
 #include <pthread.h>
 #include <time.h>
+#include <string.h>
 
 typedef struct customer
 {
@@ -64,7 +65,9 @@ int main(int argc, char *argv[])
     load_c_resources(); // Loads customer resource data from the file.
 }
 /** 
- * Function to load customer resources. 
+ * Function : load customer resources. 
+ * 
+ * Param : None
  * 
  * @author Anshul 
  * @author Pranav
@@ -136,6 +139,24 @@ int load_c_resources()
     //avoid memory leaks
     free(line);
     fclose(file_p);
+}
+
+/**
+ * Function : Prints an integer array with good spacing.
+ * Params : Pass the array and the length of the array.
+ * 
+ * @author Pranav Verma
+ */
+void print_array_proper(int *arr, int len)
+{
+    for (int i = 0; i < len; i++)
+    {
+        printf("%d", arr[i]);
+        if (i == len - 1)
+            printf("\n");
+        else
+            printf(" ");
+    }
 }
 
 /**
