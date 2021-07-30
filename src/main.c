@@ -22,8 +22,8 @@
 typedef struct customer
 {
     int *need_resources;
-    int *allocation_resources;
-    int *max_resources;
+    int *allocated_resources;
+    int *maximum_resources;
 } Customer;
 
 Customer *c_resources;
@@ -99,13 +99,14 @@ int load_c_resources()
                 n_customers--;
         }
     }
+
     fseek(file_p, 0, SEEK_SET); // reset file_p back to start after counting
 
     // allocate memory for customer resources data structure
     c_resources = malloc(n_customers * sizeof(Customer));
 
     // read customer data from file
-    int r, c = 0;
+    int r, k = 0;
     while ((read = getline(&line, &len, file_p)) != -1)
 
     { // for each line in file
@@ -113,22 +114,22 @@ int load_c_resources()
         if (strlen(line) > 1)
         {
             // create customer data structure to initialise it.
-            Customer customer;
+            Customer c;
 
-            customer.max_resources = delimited_string_to_int_array(line, ",", (n_resources));
-            customer.allocation_resources = malloc(sizeof(int) * n_resources);
-            customer.need_resources = malloc(sizeof(int) * n_resources);
+            c.maximum_resources = delimited_string_to_int_array(line, ",", (n_resources));
+            c.allocated_resources = malloc(sizeof(int) * n_resources);
+            c.need_resources = malloc(sizeof(int) * n_resources);
 
             // ensure no memory-related value issues occur by setting values to 0 (frick C)
             for (r = 0; r < n_resources; r++)
-                customer.allocation_resources[r] = 0;
+                c.allocated_resources[r] = 0;
             // need = max - allocation, allocation is all 0s now, so set to need = max to start
 
             for (r = 0; r < n_resources; r++)
-                customer.need_resources[r] = customer.max_resources[r];
+                c.need_resources[r] = c.maximum_resources[r];
 
-            c_resources[c] = customer;
-            c++;
+            c_resources[k] = c;
+            k++;
         }
     }
 
