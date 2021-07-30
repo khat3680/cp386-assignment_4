@@ -182,3 +182,59 @@ int *string_to_int_array(char *msg, char *delimeter, int len)
     }
     return arr;
 }
+/**
+ * Program event loop.
+ * Loops until the user types 'close'
+ * Allows user to actively interact with the program.
+ * 
+ * @author Pranav Verma
+ */
+void run_program() {
+    // used for reading from console
+    char *in = NULL;
+    size_t length = 0;
+    ssize_t read = 0;
+
+    // loops until told to stop (stoped via "close" command)
+    int run = true;
+    while (run) {
+        printf("Enter Command: ");
+        read = getline(&in, &length, stdin);  // reads  a line from console via getline
+        if (read == -1)
+            // exits if an error is encountered
+            run = false;
+        else {
+            // converts input(in) to lowercase
+            char *char_ptr = in;
+            for (; *char_ptr; ++char_ptr) {
+                // removes the line breaks
+                if (*char_ptr == '\n')
+                    *char_ptr = '\0';
+                else
+                    // calls tolower function on each character
+                    *char_ptr = tolower(*char_ptr);
+            }
+
+            // calls appropriate functions as per commands and print the messages as per requirements
+            if (strlen(in) >= 2 && in[0] == 'r' && in[1] == 'q')
+                printf("%s", handle_request(in, length, request_resources));
+            else if (strlen(in) >= 2 && in[0] == 'r' && in[1] == 'l')
+                printf("%s", handle_request(in, length, release_resources));
+            // "Status"
+            else if (strcmp(in, "status") == 0)
+                display_status();
+            // "Run"
+            else if (strcmp(in, "run") == 0)
+                run_resources();
+            // "Close"
+            else if (strcmp(in, "close") == 0) {
+                printf("Exiting...\n");
+                run = false;
+            }
+            // if anyother command is entered then prints "Invalid Command"
+            else
+                printf("Invalid Command\n");
+        }
+    }
+    free(in);  // no memory leaks :)
+}
