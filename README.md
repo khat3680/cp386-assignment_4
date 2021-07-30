@@ -25,7 +25,7 @@
 
 ## Code Examples
 
-## Authors
+## About Developers
 
 - [Anshul Khatri](https://github.com/khat3680)<br/>
 - [Pranav Verma](https://github.com/Navsan1)<br/>

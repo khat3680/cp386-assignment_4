@@ -2,10 +2,15 @@
  * 
  * CP 386 - Assignment 4
  * 
+<<<<<<< HEAD
  * @author Anshul Khatri (193313680) 
  * Github login - https://github.com/khat3680/
  * @author Pranav Verma (193272030) 
  * Github login - https://github.com/Navsan1
+=======
+ * @author Anshul Khatri (193313680) - https://github.com/khat3680/
+ * @author Pranav Verma (193272030) - https://github.com/Navsan1
+>>>>>>> 64eb88a8effbef36eceef9b4a768c69469c4e8c7
  * 
  * @see https://github.com/khat3680/cp386-assignment_4
  * 
