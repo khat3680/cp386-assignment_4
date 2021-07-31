@@ -43,16 +43,16 @@ int load_c_resources();
 void start_program();
 
 void display_status();
-char *request_resources(int customer_number, int *request);
+char *request_resources(int customer_number, int *request); //left
 char *release_resources(int customer_number, int *request);
 void run_resources();
 
-bool is_safe();
+bool safety_check();
 
 char *handle_request(char *input, int len, char *(*func)(int, int *));
 
 int *string_to_int_array(char *msg, char *delimeter, int len);
-void print_array(int *arr, int len);
+void print_array_proper(int *arr, int len);
 
 /* Function declrartion closed. */
 
@@ -344,7 +344,7 @@ char *release_resources(int customer_number, int *request)
 
 /**
  * Processes request for resources from bank.
- * Check if request is possible and safe to fulfill else 
+ * Check if request is possible and safety_check to fulfill else 
  * tells customer to  wait or make a different request.
  *  
  * @author Pranav Verma
@@ -354,7 +354,7 @@ char *resources_request(int customer_number, int *request)
 {
     // uses resource-request algorithm from lecture notes
     int r, c = customer_number;
-    bool isvlaid = true, safe;
+    bool isvlaid = true, safety_check;
     // condition 1: request vector <= customer's need vector, request has exceeding it's maximum claim
     for (r = 0; r < n_resources && isvlaid; r++)
         isvlaid = request[r] <= c_resources[c].need_resources[r];
@@ -366,28 +366,28 @@ char *resources_request(int customer_number, int *request)
             isvlaid = request[r] <= avail_resources[r];
         if (isvlaid)
         {
-            // temporarily modify values to determine if safe
+            // temporarily modify values to determine if safety_check
             for (r = 0; r < n_resources; r++)
             {
                 avail_resources[r] -= request[r];
                 c_resources[c].allocated_resources[r] += request[r];
                 c_resources[c].need_resources[r] -= request[r];
             }
-            if (is_safe(NULL))
+            if (is_safety_check(NULL))
             {
-                // if system is safe after fulfilling the resource request, print success message
-                return "State is safe, and request is satisfied\n";
+                // if system is safety_check after fulfilling the resource request, print success message
+                return "State is safety_check, and request is satisfied\n";
             }
             else
             {
-                // if system becomes unsafe, undo temporary changes to value and print failure message
+                // if system becomes unsafety_check, undo temporary changes to value and print failure message
                 for (r = 0; r < n_resources; r++)
                 {
                     avail_resources[r] += request[r];
                     c_resources[c].allocated_resources[r] -= request[r];
                     c_resources[c].need_resources[r] += request[r];
                 }
-                return "State is not safe, not enough resources available for that request\n";
+                return "State is not safety_check, not enough resources available for that request\n";
             }
         }
         else
@@ -498,13 +498,57 @@ char *handle_request(char *input, int len, char *(*func)(int, int *))
 }
 
 /**
- * Saftey Algorithm implementation, to check system is in a safe state or not.
+ * Executes customers like a threads in a safety_check sequence.
+ *  
+ * @author Anshul Khatri
+ * @author Pranav Verma
+ */
+void run_resources()
+{
+    // check if a safety_check sequence exists and store the sequence in sequence
+    int c, position;
+    int *sequence = (int *)malloc(n_customers * sizeof(int));
+    bool safety_check_sequence_exists = is_safety_check(&sequence);
+    // once we have a safety_check sequence, we can run it
+    if (safety_check_sequence_exists)
+    {
+        printf("safety_check sequence is: ");
+        print_array(sequence, n_customers);
+        for (position = 0; position < n_customers; position++)
+        {
+            // display status before running thread
+            c = sequence[position]; // current customer
+            printf("--> Customer/Thread %d\n", c);
+            printf("    Allocated resources: ");
+            print_array(c_resources[c].allocated_resources, n_resources);
+            printf("    Needed: ");
+            print_array(c_resources[c].need_resources, n_resources);
+            printf("    Available: ");
+            print_array(avail_resources, n_resources);
+            // run thread by requesting all needed resources
+            printf("    Thread has started\n");
+            request_resources(c, c_resources[c].need_resources);
+            printf("    Thread has finished\n");
+            // release resources
+            printf("    Thread is releasing resources\n");
+            release_resources(c, c_resources[c].allocated_resources);
+            // display new status
+            printf("    New available: ");
+            print_array(avail_resources, n_resources);
+        }
+    }
+    else
+        printf("safety_check sequence is: There is no safety_check sequence\n");
+}
+
+/**
+ * Saftey Algorithm implementation, to check system is in a safety_check state or not.
  * 
  * @author Pranav Verma
  * @author Anshul Khatri
  */
 
-bool safe(int *seq[])
+bool safety_check(int *seq[])
 {
     int *work = (int *)malloc(n_resources * sizeof(int));
     bool *finish = (bool *)malloc(n_customers * sizeof(bool));
@@ -516,11 +560,11 @@ bool safe(int *seq[])
     for (b = 0; b < n_customers; b++)
         finish[b] = false;
 
-    // loops until either safe state or unsafe state and there were no changes made to the system
-    bool safe, customer_wait;
+    // loops until either safety_check state or unsafety_check state and there were no changes made to the system
+    bool safety_check, customer_wait;
     for (i = 0; i < n_customers; i++)
     {
-        safe = true;
+        safety_check = true;
         // attempts to finishd a customer to finish
         for (b = 0; b < n_customers; b++)
         {
@@ -555,12 +599,12 @@ bool safe(int *seq[])
         b = 0;
         while (b < n_customers)
         {
-            safe = safe && finish[b];
+            safety_check = safety_check && finish[b];
             b++;
         }
     }
-    // frees the memory and makes the sequence null if there is no safe sequence
-    if (!safe)
+    // frees the memory and makes the sequence null if there is no safety_check sequence
+    if (!safety_check)
     {
         if (seq)
         {
@@ -571,7 +615,7 @@ bool safe(int *seq[])
     // Avoid memory leakage
     free(work);
 
-    return safe;
+    return safety_check;
 }
 
 /**
