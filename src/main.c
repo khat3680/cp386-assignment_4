@@ -39,20 +39,20 @@ int *avail_resources; //resources array showing avialbable resources.
 
 /* Function declaration */
 
-int load_c_resources();
+void load_c_resources();
 void start_program();
 
 void display_status();
-char *request_resources(int customer_number, int *request); //left
-char *release_resources(int customer_number, int *request);
-void run_resources();
+char *resources_request(int cust_number, int *request); //left
+char *release_resources(int cust_number, int *request);
+void begin_resources();
 
-bool safety_check();
+bool is_safety_check();
 
 char *handle_request(char *input, int len, char *(*func)(int, int *));
 
 int *string_to_int_array(char *msg, char *delimeter, int len);
-void print_array_proper(int *arr, int len);
+void print_proper_array(int *arr, int len);
 
 /* Function declrartion closed. */
 
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
  * @author Pranav
  */
 
-int load_c_resources()
+void load_c_resources()
 {
     // for reading from file
     FILE *file_p;
@@ -111,7 +111,7 @@ int load_c_resources()
     {
 
         printf("File opening error."); // Issue in opening file
-        return -1;
+        return;
     }
 
     n_customers = 1; // start at one since last line does not have line break
@@ -145,8 +145,8 @@ int load_c_resources()
             Customer c;
 
             c.maximum_resources = string_to_int_array(line, ",", (n_resources));
-            c.allocated_resources = malloc(sizeof(int) * n_resources);//initailzing allocated_resource
-            c.need_resources = malloc(sizeof(int) * n_resources);//initalizing need_resource
+            c.allocated_resources = malloc(sizeof(int) * n_resources); //initailzing allocated_resource
+            c.need_resources = malloc(sizeof(int) * n_resources);      //initalizing need_resource
 
             // ensures that no memory-related value issues occur by setting values to 0
             for (r = 0; r < n_resources; r++)
@@ -177,26 +177,26 @@ void display_status()
     // print status
     int c;
     printf("Available Resources:\n");
-    print_array(avail_resources, n_resources);
+    print_proper_array(avail_resources, n_resources);
 
     printf("Maximum Resources:\n");
 
     for (c = 0; c < n_customers; c++)
     {
-        print_array(c_resources[c].maximum_resources, n_resources); //printing the max resoures
+        print_proper_array(c_resources[c].maximum_resources, n_resources); //printing the max resoures
     }
 
     printf("Allocated Resources:\n");
 
     for (c = 0; c < n_customers; c++)
     {
-        print_array(c_resources[c].allocated_resources, n_resources); //printing the allocated resoures
+        print_proper_array(c_resources[c].allocated_resources, n_resources); //printing the allocated resoures
     }
     printf("Need Resources:\n");
 
     for (c = 0; c < n_customers; c++)
     {
-        print_array(c_resources[c].need_resources, n_resources); //printing the required resoures
+        print_proper_array(c_resources[c].need_resources, n_resources); //printing the required resoures
     }
 }
 
@@ -206,7 +206,7 @@ void display_status()
  * 
  * @author Pranav Verma
  */
-void print_array_proper(int *arr, int len)
+void print_proper_array(int *arr, int len)
 {
     for (int i = 0; i < len; i++)
     {
@@ -233,7 +233,7 @@ int *string_to_int_array(char *msg, char *delimeter, int len)
     char *token;
     while ((token = strsep(&msg, delimeter)) != NULL)
     {
-        if (token != "")
+        if (token != NULL)
         {
             arr[count] = atoi(token);
             count++;
@@ -313,9 +313,9 @@ void start_program()
  * @author Anshul Khatri
  * @author Pranav Verma
  */
-char *release_resources(int customer_number, int *request)
+char *release_resources(int cust_number, int *request)
 {
-    int r, c = customer_number;
+    int r, c = cust_number;
 
     bool isvlaid = true;
 
@@ -350,10 +350,10 @@ char *release_resources(int customer_number, int *request)
  * @author Pranav Verma
  * @author Anshul Khatri
  */
-char *resources_request(int customer_number, int *request)
+char *resources_request(int cust_number, int *request)
 {
     // uses resource-request algorithm from lecture notes
-    int r, c = customer_number;
+    int r, c = cust_number;
     bool isvlaid = true, safety_check;
     // condition 1: request vector <= customer's need vector, request has exceeding it's maximum claim
     for (r = 0; r < n_resources && isvlaid; r++)
@@ -425,17 +425,17 @@ char *handle_request(char *in, int length, char *(*func)(int, int *))
             is_number = token[i] >= '0' && token[i] <= '9';
         if (is_number)
         {
-            // uses the number as customer_number if it is the first number we find
-            if (customer_number == -1)
+            // uses the number as cust_number if it is the first number we find
+            if (cust_number == -1)
             {
                 if (atoi(token) >= 0)
                     if (atoi(token) < n_customers)
-                        // used as customer_number
-                        customer_number = atoi(token);
+                        // used as cust_number
+                        cust_number = atoi(token);
                     else
                     {
                         valid = false;
-                        free(request); // to avoid memory leaks 
+                        free(request); // to avoid memory leaks
                         return "Bad command, customer number too big\n";
                     }
                 else
@@ -474,7 +474,7 @@ char *handle_request(char *in, int length, char *(*func)(int, int *))
         else
         {
             valid = false;
-            free(request); // to avoid memory leaks 
+            free(request); // to avoid memory leaks
             return "Bad command, non-numeric argument given\n";
         }
     }
@@ -485,7 +485,7 @@ char *handle_request(char *in, int length, char *(*func)(int, int *))
         {
             // the request is valid!!! go ahead and call the appropriate function and return its return value :)
             char *msg = func(cust_number, request);
-            free(request); // to avoid memory leaks 
+            free(request); // to avoid memory leaks
             return msg;
         }
         else
@@ -495,6 +495,12 @@ char *handle_request(char *in, int length, char *(*func)(int, int *))
             return "Bad command, not enough arguments given\n";
         }
     }
+    else
+    {
+        valid = false;
+        free(request); // to avoid memory leaks
+        return "Bad command, not enough arguments given\n";
+    }
 }
 
 /**
@@ -503,7 +509,7 @@ char *handle_request(char *in, int length, char *(*func)(int, int *))
  * @author Anshul Khatri
  * @author Pranav Verma
  */
-void run_resources()
+void begin_resources()
 {
     // check if a safety_check sequence exists and store the sequence in sequence
     int c, position;
@@ -513,28 +519,28 @@ void run_resources()
     if (safety_check_sequence_exists)
     {
         printf("safety_check sequence is: ");
-        print_array(sequence, n_customers);
+        print_proper_array(sequence, n_customers);
         for (position = 0; position < n_customers; position++)
         {
             // display status before running thread
             c = sequence[position]; // current customer
             printf("--> Customer/Thread %d\n", c);
             printf("    Allocated resources: ");
-            print_array(c_resources[c].allocated_resources, n_resources);
+            print_proper_array(c_resources[c].allocated_resources, n_resources);
             printf("    Needed: ");
-            print_array(c_resources[c].need_resources, n_resources);
+            print_proper_array(c_resources[c].need_resources, n_resources);
             printf("    Available: ");
-            print_array(avail_resources, n_resources);
+            print_proper_array(avail_resources, n_resources);
             // run thread by requesting all needed resources
             printf("    Thread has started\n");
-            request_resources(c, c_resources[c].need_resources);
+            resources_request(c, c_resources[c].need_resources);
             printf("    Thread has finished\n");
             // release resources
             printf("    Thread is releasing resources\n");
             release_resources(c, c_resources[c].allocated_resources);
             // display new status
             printf("    New available: ");
-            print_array(avail_resources, n_resources);
+            print_proper_array(avail_resources, n_resources);
         }
     }
     else
@@ -548,7 +554,7 @@ void run_resources()
  * @author Anshul Khatri
  */
 
-bool safety_check(int *seq[])
+bool is_safety_check(int *seq[])
 {
     int *work = (int *)malloc(n_resources * sizeof(int));
     bool *finish = (bool *)malloc(n_customers * sizeof(bool));
@@ -618,9 +624,3 @@ bool safety_check(int *seq[])
     return safety_check;
 }
 
-/**
- * Executes customers as threads in a safe sequence.
- *  
- * @author Kelvin Kellner 
- * @author Nish Tewari
- */
