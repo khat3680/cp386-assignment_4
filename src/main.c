@@ -20,6 +20,8 @@
 #include <pthread.h>
 #include <time.h>
 #include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
 
 typedef struct customer
 {
@@ -110,6 +112,40 @@ int load_c_resources()
     //avoid memory leaks
     free(line);
     fclose(file_p);
+}
+
+/**
+ * Prints arrays of all available customer resources
+ *  
+ * @author Pranav Verma
+ * @author Anshul Khatri
+ */
+void display_status()
+{
+    // print status
+    int c;
+    printf("Available Resources:\n");
+    print_array(avail_resources, n_resources);
+
+    printf("Maximum Resources:\n");
+
+    for (c = 0; c < n_customers; c++)
+    {
+        print_array(c_resources[c].maximum_resources, n_resources); //printing the max resoures
+    }
+
+    printf("Allocated Resources:\n");
+
+    for (c = 0; c < n_customers; c++)
+    {
+        print_array(c_resources[c].allocated_resources, n_resources); //printing the allocated resoures
+    }
+    printf("Need Resources:\n");
+
+    for (c = 0; c < n_customers; c++)
+    {
+        print_array(c_resources[c].need_resources, n_resources); //printing the required resoures
+    }
 }
 
 /**
