@@ -402,71 +402,71 @@ char *resources_request(int customer_number, int *request)
 }
 
 /**
- * Help function for RQ and RL commands to process and validate command calls.
+ * Helps function for RQ and RL commands to process and validate command calls.
  * 
  * @author Anshul Khatri
  * @author Pranav Verma
  */
-char *handle_request(char *input, int len, char *(*func)(int, int *))
+char *handle_request(char *in, int length, char *(*func)(int, int *))
 {
-    int customer_number = -1;
-    int *request = (int *)malloc(len * sizeof(int));
+    int cust_number = -1;
+    int *request = (int *)malloc(length * sizeof(int));
     int i, n, count = 0;
     // valid is not needed anymore, since changing from a void* to char* function, still leaving it because it does no harm :)
     bool is_number = true, valid = true;
 
     // begin processing given command in string input, token stores next value of input split by space as a delimeter
-    char *token = strsep(&input, " "); // skip "RQ" or "RL"
-    while ((token = strsep(&input, " ")) != NULL && valid)
+    char *token = strsep(&in, " "); // skip "RQ" or "RL"
+    while ((token = strsep(&in, " ")) != NULL && valid)
     {
-        // check if token is numeric first, only valid entries please!
+        // checks if a token is numeric first, only valid entries please!
         n = strlen(token);
-        for (i = 0; i < n && is_number; i++) // if all characters in token are numeric
+        for (i = 0; i < n && is_number; i++) // loop for checking if all characters in token are numeric
             is_number = token[i] >= '0' && token[i] <= '9';
         if (is_number)
         {
-            // use the number as customer_number if it is the first number we find
+            // uses the number as customer_number if it is the first number we find
             if (customer_number == -1)
             {
                 if (atoi(token) >= 0)
                     if (atoi(token) < n_customers)
-                        // use as customer_number
+                        // used as customer_number
                         customer_number = atoi(token);
                     else
                     {
                         valid = false;
-                        free(request); // no memory leaks :)
+                        free(request); // to avoid memory leaks 
                         return "Bad command, customer number too big\n";
                     }
                 else
                 {
                     valid = false;
-                    free(request); // no memory leaks :)
+                    free(request); // to avoid memory leaks
                     return "Bad command, negative values are not acceptable\n";
                 }
             }
             else
             {
-                // all following numbers are used as resource amounts
+                // all the following numbers are used as resource amounts
                 if (count < n_resources)
                 {
                     if (atoi(token) >= 0)
-                    { // if positive
-                        // store number in the request array
+                    { // if +ive
+                        // stores the number in the request array
                         request[count] = atoi(token);
-                        count++; // increment count
+                        count++; // incrementation
                     }
                     else
                     {
                         valid = false;
-                        free(request); // no memory leaks :)
+                        free(request); // to avoid memory leaks
                         return "Bad command, negative values are not acceptable\n";
                     }
                 }
                 else
                 {
                     valid = false;
-                    free(request); // no memory leaks :)
+                    free(request); // to avoid memory leaks
                     return "Bad command, more arguments given than needed\n";
                 }
             }
@@ -474,7 +474,7 @@ char *handle_request(char *input, int len, char *(*func)(int, int *))
         else
         {
             valid = false;
-            free(request); // no memory leaks :)
+            free(request); // to avoid memory leaks 
             return "Bad command, non-numeric argument given\n";
         }
     }
@@ -484,14 +484,14 @@ char *handle_request(char *input, int len, char *(*func)(int, int *))
         if (count == n_resources)
         {
             // the request is valid!!! go ahead and call the appropriate function and return its return value :)
-            char *msg = func(customer_number, request);
-            free(request); // no memory leaks :)
+            char *msg = func(cust_number, request);
+            free(request); // to avoid memory leaks 
             return msg;
         }
         else
         {
             valid = false;
-            free(request); // no memory leaks :)
+            free(request); // to avoid memory leaks
             return "Bad command, not enough arguments given\n";
         }
     }
