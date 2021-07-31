@@ -214,6 +214,38 @@ void start_program()
     free(in); // avoid leaks
 }
 
+/**
+ * Releases resources from a customer and makes them available again.
+ *  
+ * @author Anshul Khatri
+ * @author Pranav Verma
+ */
+char *release_resources(int customer_number, int *request)
+{
+    int r, c = customer_number;
+    // optional extra validation in case someone really tries to breaky-breaky :eyes:
+    bool valid = true;
+    // check if release vector > allocation vector, otherwise a release request might "create new resources"
+    for (r = 0; r < n_resources; r++)
+    {
+        // not exhaustive, we do not check if this customer is the one holding the resources, not important
+        if (request[r] > c_resources[c].allocated_resources[r])
+            valid = false;
+    }
+    if (valid)
+    {
+        // release those resources!
+        for (r = 0; r < n_resources; r++)
+        {
+            // simply make the resources available again
+            avail_resources[r] += request[r];
+        }
+        return "Resources have been released\n";
+    }
+    else
+        return "Cannot release resources that are not in use\n";
+}
+
 /*main is where we will pass the commandline arguments for the filename 
 and we call readFile().
 main will listen to the user and push the command "RL, RQ or *"
