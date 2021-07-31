@@ -228,7 +228,7 @@ char *release_resources(int customer_number, int *request)
 {
     int r, c = customer_number;
 
-    bool valid = true;
+    bool isvlaid = true;
 
     // check if release vector > allocation vector,
     //else a release request might "create new resources"
@@ -237,9 +237,9 @@ char *release_resources(int customer_number, int *request)
     {
 
         if (request[r] > c_resources[c].allocated_resources[r])
-            valid = false;
+            isvlaid = false;
     }
-    if (valid)
+    if (isvlaid)
     {
         // releasing the resources
         for (r = 0; r < n_resources; r++)
@@ -251,6 +251,65 @@ char *release_resources(int customer_number, int *request)
     }
     else
         return "Cannot release resources that are not in use\n";
+}
+
+/**
+ * Processes request for resources from bank.
+ * Check if request is possible and safe to fulfill else 
+ * tells customer to  wait or make a different request.
+ *  
+ * @author Pranav Verma
+ * @author Anshul Khatri
+ */
+char *request_resources(int customer_number, int *request)
+{
+    // uses resource-request algorithm from lecture notes
+    int r, c = customer_number;
+    bool isvlaid = true, safe;
+    // condition 1: request vector <= customer's need vector, request has exceeding it's maximum claim
+    for (r = 0; r < n_resources && isvlaid; r++)
+        isvlaid = request[r] <= c_resources[c].need_resources[r];
+
+    if (isvlaid)
+    {
+        // condition 2: request vector <= available vector, customer must wait til resources are available
+        for (r = 0; r < n_resources && isvlaid; r++)
+            isvlaid = request[r] <= avail_resources[r];
+        if (isvlaid)
+        {
+            // temporarily modify values to determine if safe
+            for (r = 0; r < n_resources; r++)
+            {
+                avail_resources[r] -= request[r];
+                c_resources[c].allocated_resources[r] += request[r];
+                c_resources[c].need_resources[r] -= request[r];
+            }
+            if (is_safe(NULL))
+            {
+                // if system is safe after fulfilling the resource request, print success message
+                return "State is safe, and request is satisfied\n";
+            }
+            else
+            {
+                // if system becomes unsafe, undo temporary changes to value and print failure message
+                for (r = 0; r < n_resources; r++)
+                {
+                    avail_resources[r] += request[r];
+                    c_resources[c].allocated_resources[r] -= request[r];
+                    c_resources[c].need_resources[r] += request[r];
+                }
+                return "State is not safe, not enough resources available for that request\n";
+            }
+        }
+        else
+        {
+            return "Enough resources unavailable, wait\n";
+        }
+    }
+    else
+    {
+        return "Request exceeds maximum resource claim, cannot be satisfied\n";
+    }
 }
 
 /*main is where we will pass the commandline arguments for the filename 
