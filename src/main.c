@@ -128,27 +128,27 @@ int load_c_resources()
         }
     }
 
-    fseek(file_p, 0, SEEK_SET); // reset file_p back to start after counting
+    fseek(file_p, 0, SEEK_SET); // resets the file_p back to start after counting
 
-    // allocate memory for customer resources data structure
+    // allocates memory for customer resources data structure
     c_resources = malloc(n_customers * sizeof(Customer));
 
-    // read customer data from file
+    // reads customer data from file
     int r, k = 0;
     while ((read = getline(&line, &len, file_p)) != -1)
 
-    { // for each line in file
-        // ignore blank lines
+    { // loop for each line in file
+        // ignores any blank lines
         if (strlen(line) > 1)
         {
-            // create customer data structure to initialise it.
+            // creates a customer data structure to initialise it.
             Customer c;
 
             c.maximum_resources = string_to_int_array(line, ",", (n_resources));
-            c.allocated_resources = malloc(sizeof(int) * n_resources);
-            c.need_resources = malloc(sizeof(int) * n_resources);
+            c.allocated_resources = malloc(sizeof(int) * n_resources);//initailzing allocated_resource
+            c.need_resources = malloc(sizeof(int) * n_resources);//initalizing need_resource
 
-            // ensure no memory-related value issues occur by setting values to 0 (frick C)
+            // ensures that no memory-related value issues occur by setting values to 0
             for (r = 0; r < n_resources; r++)
                 c.allocated_resources[r] = 0;
             // need = max - allocation, allocation is all 0s now, so set to need = max to start
@@ -409,9 +409,9 @@ char *resources_request(int customer_number, int *request)
  */
 char *handle_request(char *in, int length, char *(*func)(int, int *))
 {
-    int cust_number = -1;
+    int cust_number = -1; //setting customer numer as -1
     int *request = (int *)malloc(length * sizeof(int));
-    int i, n, count = 0;
+    int i, n, count = 0; // initialzing integers for loop and count
     // valid is not needed anymore, since changing from a void* to char* function, still leaving it because it does no harm :)
     bool is_number = true, valid = true;
 
@@ -619,67 +619,8 @@ bool safety_check(int *seq[])
 }
 
 /**
- * Program event loop.
- * Loops until the user types 'close'
- * Allows user to actively interact with the program.
- * 
- * @author Pranav Verma
+ * Executes customers as threads in a safe sequence.
+ *  
+ * @author Kelvin Kellner 
+ * @author Nish Tewari
  */
-void start_program()
-{
-    // initialising tools for reading from console.
-    char *in = NULL;
-    size_t length = 0;
-    ssize_t read = 0;
-
-    // repeats untill stop is done.
-    int begin = true;
-    while (begin)
-    {
-        printf("Enter Command: ");
-        read = getline(&in, &length, stdin); // reading line by line.
-        if (read == -1)
-            // exit if error
-            begin = false;
-        else
-        {
-            // converts input(in) to lowercase
-            char *char_pointer = in;
-            for (; *char_pointer; ++char_pointer)
-            {
-                // cleaning the lines
-                if (*char_pointer == '\n')
-                    *char_pointer = '\0';
-                else
-
-                    *char_pointer = tolower(*char_pointer); // Convert each letter to lower case
-            }
-
-            // calls appropriate functions as per commands and print the messages as per requirements
-            if (strlen(in) >= 2 && in[0] == 'r' && in[1] == 'q')
-                printf("%s", handle_request(in, length, resources_request));
-
-            else if (strlen(in) >= 2 && in[0] == 'r' && in[1] == 'l')
-                printf("%s", handle_request(in, length, release_resources));
-            // "Status"
-
-            else if (strcmp(in, "status") == 0)
-                display_status();
-
-            // "begin"
-            else if (strcmp(in, "begin") == 0)
-                begin_resources();
-            // "Close"
-
-            else if (strcmp(in, "close") == 0)
-            {
-                printf("Exiting...\n");
-                begin = false;
-            }
-            // Other command is entered then prints "Invalid Command"
-            else
-                printf("Invalid Command\n");
-        }
-    }
-    free(in); // avoid leaks
-}
