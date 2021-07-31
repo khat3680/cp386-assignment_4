@@ -34,36 +34,6 @@ int n_customers;
 
 int *avail_resources; //available array for the resources
 
-/*main is where we will pass the commandline arguments for the filename 
-and we call readFile().
-main will listen to the user and push the command "RL, RQ or *"
-to runCommand function*/
-
-int main(int argc, char *argv[])
-{
-    // checking arguements
-    if (argc < 3) //check if we have enough resources
-    {
-        printf("INVALID: Enter at least 2 values with space - demilited\n");
-
-        return 1;
-    }
-    else
-    {
-        printf("\n\nWelcome to the program made by Anshul and Pranav. :D\n\n");
-
-        int n_resources = argc - 1;
-
-        avail_resources = (int *)malloc((n_resources) * sizeof(int)); // allocate memory for array
-
-        for (int i = 1; i < n_resources; i++) //put argv into available array
-        {
-            avail_resources[i] = atoi(argv[i + 1]);
-        }
-    }
-
-    load_c_resources(); // Loads customer resource data from the file.
-}
 /** 
  * Function : load customer resources. 
  * 
@@ -189,7 +159,8 @@ int *string_to_int_array(char *msg, char *delimeter, int len)
  * 
  * @author Pranav Verma
  */
-void run_program() {
+void run_program()
+{
     // used for reading from console
     char *in = NULL;
     size_t length = 0;
@@ -197,16 +168,19 @@ void run_program() {
 
     // loops until told to stop (stoped via "close" command)
     int run = true;
-    while (run) {
+    while (run)
+    {
         printf("Enter Command: ");
-        read = getline(&in, &length, stdin);  // reads  a line from console via getline
+        read = getline(&in, &length, stdin); // reads  a line from console via getline
         if (read == -1)
             // exits if an error is encountered
             run = false;
-        else {
+        else
+        {
             // converts input(in) to lowercase
             char *char_ptr = in;
-            for (; *char_ptr; ++char_ptr) {
+            for (; *char_ptr; ++char_ptr)
+            {
                 // removes the line breaks
                 if (*char_ptr == '\n')
                     *char_ptr = '\0';
@@ -227,7 +201,8 @@ void run_program() {
             else if (strcmp(in, "run") == 0)
                 run_resources();
             // "Close"
-            else if (strcmp(in, "close") == 0) {
+            else if (strcmp(in, "close") == 0)
+            {
                 printf("Exiting...\n");
                 run = false;
             }
@@ -236,5 +211,36 @@ void run_program() {
                 printf("Invalid Command\n");
         }
     }
-    free(in);  // no memory leaks :)
+    free(in); // no memory leaks :)
+}
+
+/*main is where we will pass the commandline arguments for the filename 
+and we call readFile().
+main will listen to the user and push the command "RL, RQ or *"
+to runCommand function*/
+
+int main(int argc, char *argv[])
+{
+    // checking arguements
+    if (argc < 3) //check if we have enough resources
+    {
+        printf("INVALID: Enter at least 2 values with space - demilited\n");
+
+        return 1;
+    }
+    else
+    {
+        printf("\n\nWelcome to the program made by Anshul and Pranav. :D\n\n");
+
+        int n_resources = argc - 1;
+
+        avail_resources = (int *)malloc((n_resources) * sizeof(int)); // allocate memory for array
+
+        for (int i = 1; i < n_resources; i++) //put argv into available array
+        {
+            avail_resources[i] = atoi(argv[i + 1]);
+        }
+    }
+
+    load_c_resources(); // Loads customer resource data from the file.
 }
