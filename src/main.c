@@ -383,58 +383,78 @@ int main(int argc, char *argv[])
 }
 
 /**
- * Uses a Saftey Algorithm to determine whether the system is in a safe state or not.
+ * Saftey Algorithm implementation, to check system is in a safe state or not.
  * 
  * @author Pranav Verma
+ * @author Anshul Khatri
  */
 
-bool safe(int *seq[]) {
+bool safe(int *seq[])
+{
     int *work = (int *)malloc(n_resources * sizeof(int));
-    bool *fin = (bool *)malloc(n_customers * sizeof(bool));
+    bool *finish = (bool *)malloc(n_customers * sizeof(bool));
+
     int a, b, i, count = 0;
     for (a = 0; a < n_resources; a++)
         work[a] = avail_resources[a];
+
     for (b = 0; b < n_customers; b++)
-        fin[b] = false;
+        finish[b] = false;
 
     // loops until either safe state or unsafe state and there were no changes made to the system
     bool safe, customer_wait;
-    for (i = 0; i < n_customers; i++) {
+    for (i = 0; i < n_customers; i++)
+    {
         safe = true;
-        // attempts to find a customer to finish
-        for (b = 0; b < n_customers; b++) {
-            if (fin[b] == false) {  // situation 1:  customer is not finished
+        // attempts to finishd a customer to finish
+        for (b = 0; b < n_customers; b++)
+        {
+            if (finish[b] == false)
+            { // situation 1:  customer is not finish
                 customer_wait = false;
+
                 // situation 2: customer needs a vector which must be <= work vector
-                for (a = 0; a < n_resources && !customer_wait; a++) {
+
+                a = 0;
+                while (a < n_resources && !customer_wait)
+                {
                     if (c_resources[b].need_resources[a] > work[a])
                         customer_wait = true;
+                    a++;
                 }
+
                 // if both situations are met
-                if (!customer_wait) {
+                if (!customer_wait)
+                {
                     // puts the customer number in the sequence and moves to the next number
                     if (seq)
                         (*seq)[count++] = b;
                     // updates work and finish vectors to reflect any changes that were made
                     for (int a = 0; a < n_resources; a++)
                         work[a] += c_resources[b].allocated_resources[a];
-                    fin[b] = true;
+                    finish[b] = true;
                 }
             }
         }
-        // checks if all customers are finished or not
-        for (b = 0; b < n_customers; b++)
-            safe = safe && fin[b]; 
+        // checks if all customers are finish or not
+        b = 0;
+        while (b < n_customers)
+        {
+            safe = safe && finish[b];
+            b++;
+        }
     }
-    // frees the memory and makes a null if there is no safe sequence
-    if (!safe) {
-        if (seq) {
+    // frees the memory and makes the sequence null if there is no safe sequence
+    if (!safe)
+    {
+        if (seq)
+        {
             free(*seq);
             *seq = NULL;
         }
     }
-    // made to avoid memory leaks
+    // Avoid memory leakage
     free(work);
-    free(fin);
+
     return safe;
 }
