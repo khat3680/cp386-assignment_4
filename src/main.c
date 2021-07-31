@@ -223,7 +223,7 @@ void start_program()
 char *release_resources(int customer_number, int *request)
 {
     int r, c = customer_number;
-    // optional extra validation in case someone really tries to breaky-breaky :eyes:
+
     bool valid = true;
     // check if release vector > allocation vector, otherwise a release request might "create new resources"
     for (r = 0; r < n_resources; r++)
@@ -234,10 +234,10 @@ char *release_resources(int customer_number, int *request)
     }
     if (valid)
     {
-        // release those resources!
+        // releasing the resources
         for (r = 0; r < n_resources; r++)
         {
-            // simply make the resources available again
+            // avialing the resources again
             avail_resources[r] += request[r];
         }
         return "Resources have been released\n";
