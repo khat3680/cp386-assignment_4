@@ -161,17 +161,17 @@ int *string_to_int_array(char *msg, char *delimeter, int len)
  */
 void start_program()
 {
-    // used for reading from console
+    // initialising tools for reading from console.
     char *in = NULL;
     size_t length = 0;
     ssize_t read = 0;
 
-    // loops until told to stop (stoped via "close" command)
+    // repeats untill stop is done.
     int begin = true;
     while (begin)
     {
         printf("Enter Command: ");
-        read = getline(&in, &length, stdin); // reads  a line from console via getline
+        read = getline(&in, &length, stdin); // reading line by line.
         if (read == -1)
             // exit if error
             begin = false;
@@ -192,21 +192,25 @@ void start_program()
             // calls appropriate functions as per commands and print the messages as per requirements
             if (strlen(in) >= 2 && in[0] == 'r' && in[1] == 'q')
                 printf("%s", handle_request(in, length, request_resources));
+
             else if (strlen(in) >= 2 && in[0] == 'r' && in[1] == 'l')
                 printf("%s", handle_request(in, length, release_resources));
             // "Status"
+
             else if (strcmp(in, "status") == 0)
                 display_status();
+
             // "begin"
             else if (strcmp(in, "begin") == 0)
                 begin_resources();
             // "Close"
+
             else if (strcmp(in, "close") == 0)
             {
                 printf("Exiting...\n");
                 begin = false;
             }
-            // if anyother command is entered then prints "Invalid Command"
+            // Other command is entered then prints "Invalid Command"
             else
                 printf("Invalid Command\n");
         }
@@ -225,10 +229,13 @@ char *release_resources(int customer_number, int *request)
     int r, c = customer_number;
 
     bool valid = true;
-    // check if release vector > allocation vector, otherwise a release request might "create new resources"
+
+    // check if release vector > allocation vector,
+    //else a release request might "create new resources"
+
     for (r = 0; r < n_resources; r++)
     {
-        // not exhaustive, we do not check if this customer is the one holding the resources, not important
+
         if (request[r] > c_resources[c].allocated_resources[r])
             valid = false;
     }
