@@ -167,26 +167,26 @@ void start_program()
     ssize_t read = 0;
 
     // loops until told to stop (stoped via "close" command)
-    int run = true;
-    while (run)
+    int begin = true;
+    while (begin)
     {
         printf("Enter Command: ");
         read = getline(&in, &length, stdin); // reads  a line from console via getline
         if (read == -1)
-            // exits if an error is encountered
-            run = false;
+            // exit if error
+            begin = false;
         else
         {
             // converts input(in) to lowercase
-            char *char_ptr = in;
-            for (; *char_ptr; ++char_ptr)
+            char *char_pointer = in;
+            for (; *char_pointer; ++char_pointer)
             {
-                // removes the line breaks
-                if (*char_ptr == '\n')
-                    *char_ptr = '\0';
+                // cleaning the lines
+                if (*char_pointer == '\n')
+                    *char_pointer = '\0';
                 else
-                    // calls tolower function on each character
-                    *char_ptr = tolower(*char_ptr);
+
+                    *char_pointer = tolower(*char_pointer); // Convert each letter to lower case
             }
 
             // calls appropriate functions as per commands and print the messages as per requirements
@@ -197,14 +197,14 @@ void start_program()
             // "Status"
             else if (strcmp(in, "status") == 0)
                 display_status();
-            // "Run"
-            else if (strcmp(in, "run") == 0)
-                run_resources();
+            // "begin"
+            else if (strcmp(in, "begin") == 0)
+                begin_resources();
             // "Close"
             else if (strcmp(in, "close") == 0)
             {
                 printf("Exiting...\n");
-                run = false;
+                begin = false;
             }
             // if anyother command is entered then prints "Invalid Command"
             else
@@ -217,7 +217,7 @@ void start_program()
 /*main is where we will pass the commandline arguments for the filename 
 and we call readFile().
 main will listen to the user and push the command "RL, RQ or *"
-to runCommand function*/
+to beginCommand function*/
 
 int main(int argc, char *argv[])
 {
