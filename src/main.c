@@ -159,7 +159,7 @@ int *string_to_int_array(char *msg, char *delimeter, int len)
  * 
  * @author Pranav Verma
  */
-void run_program()
+void start_program()
 {
     // used for reading from console
     char *in = NULL;
@@ -211,7 +211,7 @@ void run_program()
                 printf("Invalid Command\n");
         }
     }
-    free(in); // no memory leaks :)
+    free(in); // avoid leaks
 }
 
 /*main is where we will pass the commandline arguments for the filename 
