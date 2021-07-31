@@ -35,7 +35,59 @@ Customer *c_resources;
 int n_resources;
 int n_customers;
 
-int *avail_resources; //available array for the resources
+int *avail_resources; //resources array showing avialbable resources.
+
+/* Function declaration */
+
+int load_c_resources();
+void start_program();
+
+void display_status();
+char *request_resources(int customer_number, int *request);
+char *release_resources(int customer_number, int *request);
+void run_resources();
+
+bool is_safe();
+
+char *handle_request(char *input, int len, char *(*func)(int, int *));
+
+int *string_to_int_array(char *msg, char *delimeter, int len);
+void print_array(int *arr, int len);
+
+/* Function declrartion closed. */
+
+/*main is where we will pass the commandline arguments for the filename 
+and we call readFile().
+main will listen to the user and push the command "RL, RQ or *"
+to beginCommand function*/
+
+int main(int argc, char *argv[])
+{
+    // checking arguements
+    if (argc < 3) //check if we have enough resources
+    {
+        printf("INVALID: Enter at least 2 values with space - demilited\n");
+
+        return 1;
+    }
+    else
+    {
+        printf("\n\nWelcome to the program made by Anshul and Pranav. :D\n\n");
+
+        int n_resources = argc - 1;
+
+        avail_resources = (int *)malloc((n_resources) * sizeof(int)); // allocate memory for array
+
+        for (int i = 1; i < n_resources; i++) //put argv into available array
+        {
+            avail_resources[i] = atoi(argv[i + 1]);
+        }
+    }
+
+    load_c_resources(); // Loads customer resource data from the file.
+
+    start_program(); // handles the start of the program.
+}
 
 /** 
  * Function : load customer resources. 
@@ -349,37 +401,100 @@ char *resources_request(int customer_number, int *request)
     }
 }
 
-/*main is where we will pass the commandline arguments for the filename 
-and we call readFile().
-main will listen to the user and push the command "RL, RQ or *"
-to beginCommand function*/
-
-int main(int argc, char *argv[])
+/**
+ * Help function for RQ and RL commands to process and validate command calls.
+ * 
+ * @author Kelvin Kellner
+ * @author Nish Tewari
+ */
+char *handle_request(char *input, int len, char *(*func)(int, int *))
 {
-    // checking arguements
-    if (argc < 3) //check if we have enough resources
+    int customer_number = -1;
+    int *request = (int *)malloc(len * sizeof(int));
+    int i, n, count = 0;
+    // valid is not needed anymore, since changing from a void* to char* function, still leaving it because it does no harm :)
+    bool is_number = true, valid = true;
+
+    // begin processing given command in string input, token stores next value of input split by space as a delimeter
+    char *token = strsep(&input, " "); // skip "RQ" or "RL"
+    while ((token = strsep(&input, " ")) != NULL && valid)
     {
-        printf("INVALID: Enter at least 2 values with space - demilited\n");
-
-        return 1;
-    }
-    else
-    {
-        printf("\n\nWelcome to the program made by Anshul and Pranav. :D\n\n");
-
-        int n_resources = argc - 1;
-
-        avail_resources = (int *)malloc((n_resources) * sizeof(int)); // allocate memory for array
-
-        for (int i = 1; i < n_resources; i++) //put argv into available array
+        // check if token is numeric first, only valid entries please!
+        n = strlen(token);
+        for (i = 0; i < n && is_number; i++) // if all characters in token are numeric
+            is_number = token[i] >= '0' && token[i] <= '9';
+        if (is_number)
         {
-            avail_resources[i] = atoi(argv[i + 1]);
+            // use the number as customer_number if it is the first number we find
+            if (customer_number == -1)
+            {
+                if (atoi(token) >= 0)
+                    if (atoi(token) < n_customers)
+                        // use as customer_number
+                        customer_number = atoi(token);
+                    else
+                    {
+                        valid = false;
+                        free(request); // no memory leaks :)
+                        return "Bad command, customer number too big\n";
+                    }
+                else
+                {
+                    valid = false;
+                    free(request); // no memory leaks :)
+                    return "Bad command, negative values are not acceptable\n";
+                }
+            }
+            else
+            {
+                // all following numbers are used as resource amounts
+                if (count < n_resources)
+                {
+                    if (atoi(token) >= 0)
+                    { // if positive
+                        // store number in the request array
+                        request[count] = atoi(token);
+                        count++; // increment count
+                    }
+                    else
+                    {
+                        valid = false;
+                        free(request); // no memory leaks :)
+                        return "Bad command, negative values are not acceptable\n";
+                    }
+                }
+                else
+                {
+                    valid = false;
+                    free(request); // no memory leaks :)
+                    return "Bad command, more arguments given than needed\n";
+                }
+            }
+        }
+        else
+        {
+            valid = false;
+            free(request); // no memory leaks :)
+            return "Bad command, non-numeric argument given\n";
         }
     }
-
-    load_c_resources(); // Loads customer resource data from the file.
-
-    start_program(); // handles the start of the program.
+    if (valid)
+    {
+        // if all numbers are processed and the amount of numbers given = n_resources
+        if (count == n_resources)
+        {
+            // the request is valid!!! go ahead and call the appropriate function and return its return value :)
+            char *msg = func(customer_number, request);
+            free(request); // no memory leaks :)
+            return msg;
+        }
+        else
+        {
+            valid = false;
+            free(request); // no memory leaks :)
+            return "Bad command, not enough arguments given\n";
+        }
+    }
 }
 
 /**
@@ -457,4 +572,70 @@ bool safe(int *seq[])
     free(work);
 
     return safe;
+}
+
+/**
+ * Program event loop.
+ * Loops until the user types 'close'
+ * Allows user to actively interact with the program.
+ * 
+ * @author Pranav Verma
+ */
+void start_program()
+{
+    // initialising tools for reading from console.
+    char *in = NULL;
+    size_t length = 0;
+    ssize_t read = 0;
+
+    // repeats untill stop is done.
+    int begin = true;
+    while (begin)
+    {
+        printf("Enter Command: ");
+        read = getline(&in, &length, stdin); // reading line by line.
+        if (read == -1)
+            // exit if error
+            begin = false;
+        else
+        {
+            // converts input(in) to lowercase
+            char *char_pointer = in;
+            for (; *char_pointer; ++char_pointer)
+            {
+                // cleaning the lines
+                if (*char_pointer == '\n')
+                    *char_pointer = '\0';
+                else
+
+                    *char_pointer = tolower(*char_pointer); // Convert each letter to lower case
+            }
+
+            // calls appropriate functions as per commands and print the messages as per requirements
+            if (strlen(in) >= 2 && in[0] == 'r' && in[1] == 'q')
+                printf("%s", handle_request(in, length, resources_request));
+
+            else if (strlen(in) >= 2 && in[0] == 'r' && in[1] == 'l')
+                printf("%s", handle_request(in, length, release_resources));
+            // "Status"
+
+            else if (strcmp(in, "status") == 0)
+                display_status();
+
+            // "begin"
+            else if (strcmp(in, "begin") == 0)
+                begin_resources();
+            // "Close"
+
+            else if (strcmp(in, "close") == 0)
+            {
+                printf("Exiting...\n");
+                begin = false;
+            }
+            // Other command is entered then prints "Invalid Command"
+            else
+                printf("Invalid Command\n");
+        }
+    }
+    free(in); // avoid leaks
 }
