@@ -10,6 +10,7 @@
  * @see https://github.com/khat3680/cp386-assignment_4
  * 
  */
+
 #include <stdio.h>
 #include <semaphore.h>
 #include <unistd.h>
@@ -191,7 +192,7 @@ void start_program()
 
             // calls appropriate functions as per commands and print the messages as per requirements
             if (strlen(in) >= 2 && in[0] == 'r' && in[1] == 'q')
-                printf("%s", handle_request(in, length, request_resources));
+                printf("%s", handle_request(in, length, resources_request));
 
             else if (strlen(in) >= 2 && in[0] == 'r' && in[1] == 'l')
                 printf("%s", handle_request(in, length, release_resources));
@@ -261,7 +262,7 @@ char *release_resources(int customer_number, int *request)
  * @author Pranav Verma
  * @author Anshul Khatri
  */
-char *request_resources(int customer_number, int *request)
+char *resources_request(int customer_number, int *request)
 {
     // uses resource-request algorithm from lecture notes
     int r, c = customer_number;
@@ -341,4 +342,6 @@ int main(int argc, char *argv[])
     }
 
     load_c_resources(); // Loads customer resource data from the file.
+
+    start_program(); // handles the start of the program.
 }
