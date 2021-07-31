@@ -404,8 +404,8 @@ char *resources_request(int customer_number, int *request)
 /**
  * Help function for RQ and RL commands to process and validate command calls.
  * 
- * @author Kelvin Kellner
- * @author Nish Tewari
+ * @author Anshul Khatri
+ * @author Pranav Verma
  */
 char *handle_request(char *input, int len, char *(*func)(int, int *))
 {
