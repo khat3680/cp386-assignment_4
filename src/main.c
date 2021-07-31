@@ -39,20 +39,20 @@ int *avail_resources; //resources array showing avialbable resources.
 
 /* Function declaration */
 
-void load_c_resources();
-void start_program();
+void load_c_resources();// declaring load_c_resources
+void start_program();//declaring start_program
 
-void display_status();
-char *resources_request(int cust_number, int *request); //left
-char *release_resources(int cust_number, int *request);
-void begin_resources();
+void display_status();//declaring display-status
+char *resources_request(int cust_number, int *request); //declaring resource_request
+char *release_resources(int cust_number, int *request); //declaring release_resources
+void begin_resources();//declaring begin_resources 
 
-bool is_safety_check();
+bool is_safety_check();//declearing is_safety_check
 
-char *handle_request(char *input, int len, char *(*func)(int, int *));
+char *handle_request(char *input, int len, char *(*func)(int, int *)); //declaring handle_request
 
-int *string_to_int_array(char *msg, char *delimeter, int len);
-void print_proper_array(int *arr, int len);
+int *string_to_int_array(char *msg, char *delimeter, int len); //declaring string_to_int_array
+void print_proper_array(int *arr, int len); //declaring print_proper_array
 
 /* Function declrartion closed. */
 
