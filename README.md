@@ -2,9 +2,6 @@
   CP386_ A4 : Bankers Algorithm
 </h1>
 
-<blockquote align="center">
-  <em>This</em> is a program that does  
-</blockquote>
 
 <br/>
 
