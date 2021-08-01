@@ -43,7 +43,7 @@
 
 ![Screenshot1](/SC_1.png "Program Start")
 
-![Screenshot2](/SC2.png "RQ, RL and * Example")
+![Screenshot2](/SC_2.png "RQ, RL and * Example")
 
 ## Contributors
 
