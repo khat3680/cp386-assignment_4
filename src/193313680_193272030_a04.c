@@ -17,7 +17,10 @@
  * state the banker will deny it.
  * 
  * 
- * 
+ * The program will consider requests from ncustomers for mresourcetypes. 
+ * The banker will keep  track  of  the  resources  using  the  following  data  structuresas  
+ * mentioned  in  chapter  8of textbook:othe availableamount of each resourceothe maximumdemand of 
+ * each customerothe amount currently allocatedto each customerothe remaining needof each customer.
  */
 
 #include <stdio.h>
