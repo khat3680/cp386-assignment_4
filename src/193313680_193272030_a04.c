@@ -16,6 +16,8 @@
  * satisfies the safety algorithm. If a request does not leave the system in a safe
  * state the banker will deny it.
  * 
+ * 
+ * 
  */
 
 #include <stdio.h>
