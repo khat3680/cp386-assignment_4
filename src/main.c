@@ -9,6 +9,13 @@
  * 
  * @see https://github.com/khat3680/cp386-assignment_4
  * 
+ * About the assignment
+ * In this asssignment we have to write a multi-thread program that implements
+ * the banker's algorithm. Customers request and release resources from the bank.
+ * The banker will keep track of the resources. The banker grants request if it
+ * satisfies the safety algorithm. If a request does not leave the system in a safe
+ * state the banker will deny it.
+ * 
  */
 
 #include <stdio.h>
@@ -49,10 +56,10 @@ void begin_resources();
 
 bool is_safety_check();
 
-char *handle_request(char *input, int len, char *(*func)(int, int *));
+char *handle_request(char *input, int len, char *(*func)(int, int *)); //declaring handle_request
 
-int *string_to_int_array(char *msg, char *delimeter, int len);
-void print_proper_array(int *arr, int len);
+int *string_to_int_array(char *msg, char *delimeter, int len); //declaring string_to_int_array
+void print_proper_array(int *arr, int len);                    //declaring print_proper_array
 
 /* Function declrartion closed. */
 
@@ -290,11 +297,11 @@ void start_program()
                 display_status();
 
             // "begin"
-            else if (strcmp(in, "begin") == 0)
+            else if (strcmp(in, "run") == 0)
                 begin_resources();
             // "Close"
 
-            else if (strcmp(in, "close") == 0)
+            else if (strcmp(in, "exit") == 0)
             {
                 printf("Exiting...\n");
                 begin = false;
