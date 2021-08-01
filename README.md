@@ -41,6 +41,10 @@
 
 ## Preview
 
+![Screenshot1](/SC_1.png "Program Start")
+
+![Screenshot2](/SC2.png "RQ, RL and * Example")
+
 ## Contributors
 
 - [Anshul Khatri](https://github.com/khat3680)<br/>
