@@ -297,11 +297,11 @@ void start_program()
                 display_status();
 
             // "begin"
-            else if (strcmp(in, "begin") == 0)
+            else if (strcmp(in, "run") == 0)
                 begin_resources();
             // "Close"
 
-            else if (strcmp(in, "close") == 0)
+            else if (strcmp(in, "exit") == 0)
             {
                 printf("Exiting...\n");
                 begin = false;
