@@ -7,7 +7,7 @@
 </blockquote>
 
 <br/>
-## Dscription
+# Dscription
 
 - In this asssignment we have to write a multi-thread program that implements the banker's algorithm. Customers request and release resources from the bank. The banker will keep track of the resources. The banker grants request if it satisfies the safety algorithm. If a request does not leave the system in a safe state the banker will deny it.
 
