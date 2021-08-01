@@ -50,7 +50,7 @@ void load_c_resources();
 void start_program();
 
 void display_status();
-char *resources_request(int cust_number, int *request); //left
+char *resources_request(int cust_number, int *request);
 char *release_resources(int cust_number, int *request);
 void begin_resources();
 
@@ -61,12 +61,7 @@ char *handle_request(char *input, int len, char *(*func)(int, int *)); //declari
 int *string_to_int_array(char *msg, char *delimeter, int len); //declaring string_to_int_array
 void print_proper_array(int *arr, int len);                    //declaring print_proper_array
 
-/* Function declrartion closed. */
-
-/*main is where we will pass the commandline arguments for the filename 
-and we call readFile().
-main will listen to the user and push the command "RL, RQ or *"
-to beginCommand function*/
+/* Function decleration closed. */
 
 int main(int argc, char *argv[])
 {
@@ -177,7 +172,7 @@ void load_c_resources()
  * Prints arrays of all available customer resources
  *  
  * @author Pranav Verma
- * @author Anshul Khatri
+ * 
  */
 void display_status()
 {
@@ -212,6 +207,7 @@ void display_status()
  * Params : Pass the array and the length of the array.
  * 
  * @author Pranav Verma
+ * @author Anshul Khatri
  */
 void print_proper_array(int *arr, int len)
 {
@@ -318,7 +314,7 @@ void start_program()
  * Releases resources from a customer and makes them available again.
  *  
  * @author Anshul Khatri
- * @author Pranav Verma
+ * 
  */
 char *release_resources(int cust_number, int *request)
 {
@@ -557,7 +553,7 @@ void begin_resources()
 /**
  * Saftey Algorithm implementation, to check system is in a safety_check state or not.
  * 
- * @author Pranav Verma
+ * 
  * @author Anshul Khatri
  */
 
